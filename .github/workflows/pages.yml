@@ -1,0 +1,45 @@
+name: 데이터 수집 후 GitHub Pages 배포
+
+on:
+  schedule:
+    - cron: "0 22 * * *"   # 매일 22:00 UTC = 07:00 KST (미국 장 마감 후)
+  workflow_dispatch:        # 수동 실행 버튼
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: 데이터 수집 (시가총액 상위 200 + ETF 50)
+        run: python run.py --build --top 200 --workers 5
+      - name: 정적 모드 표시용 메타 파일
+        run: echo '{"static":true}' > web/static.json
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

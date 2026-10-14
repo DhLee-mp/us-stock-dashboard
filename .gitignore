@@ -1,0 +1,9 @@
+.venv/
+data/
+web/data.json
+web/static.json
+logs/
+build/icon.iconset/
+build/icon_1024.png
+__pycache__/
+.DS_Store

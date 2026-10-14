@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미국 주식 나침반</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#2a78d6">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>🧭 미국 주식 나침반 <span id="gen"></span></h1>
+    <div id="liveBadge" class="live-badge" title="장중(미 동부 9:30~16:00)에는 1분마다 시세를 갱신합니다"></div>
+    <div class="toolbar">
+      <button class="btn" id="themeBtn" title="밝게/어둡게">🌓</button>
+      <button class="btn" id="helpBtn">처음이신가요?</button>
+    </div>
+  </header>
+  <nav class="tabs">
+    <a href="#market">시장 점수</a><a href="#index">지수</a><a href="#macro">금리·경기</a>
+    <a href="#picks">추천 종목</a><a href="#etf">ETF</a><a href="#gurus">거장 포트폴리오</a><a href="#all">전체 종목</a><a href="#gloss">용어</a>
+  </nav>
+
+  <div id="app"><div class="loading">데이터를 불러오는 중…<br><small>web/data.json 이 없으면 <code>python run.py</code> 를 먼저 실행하세요.</small></div></div>
+
+  <p class="disclaimer">이 대시보드는 공개 데이터를 자동으로 모아 규칙에 따라 점수를 매긴 <b>참고 자료</b>이며 투자 권유가 아닙니다.
+  점수는 과거 자료 기반이고 미래 수익을 보장하지 않습니다. 거장 포트폴리오(13F)는 분기 종료 후 최대 45일 뒤에 공개되므로 현재 보유와 다를 수 있습니다.
+  투자 결정과 그 결과는 본인의 책임입니다. 데이터 출처: <span id="sources"></span></p>
+</div>
+
+<div class="modal-bg" id="modal"><div class="modal"><button class="close" id="modalClose">×</button><div id="modalBody"></div></div></div>
+<div class="tooltip" id="tip"></div>
+<script src="app.js"></script>
+</body>
+</html>

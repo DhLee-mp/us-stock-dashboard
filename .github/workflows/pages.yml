@@ -30,8 +30,10 @@ jobs:
         run: python run.py --build --top 200 --workers 5
         env:
           SEC_CONTACT: ${{ secrets.SEC_CONTACT }}
-      - name: 정적 모드 표시용 메타 파일
-        run: echo '{"static":true}' > web/static.json
+      - name: 데이터 암호화 (비밀번호 없이는 읽을 수 없게)
+        run: python -m src.encrypt web/data.json web/data.enc
+        env:
+          DASHBOARD_PASSWORD: ${{ secrets.DASHBOARD_PASSWORD }}
       - uses: actions/configure-pages@v5
         with:
           enablement: true   # Pages가 꺼져 있으면 자동으로 켠다

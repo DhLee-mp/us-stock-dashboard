@@ -83,3 +83,8 @@ iPhone Safari에서 공유 → **홈 화면에 추가**를 누르면 앱 아이�
 ## GitHub Pages 자동 배포
 
 `.github/workflows/pages.yml`이 매일 07:00 KST에 데이터를 수집해 Pages로 배포합니다. SEC 접속용 연락처는 저장소 Secret `SEC_CONTACT`에 넣습니다 (로컬은 환경변수).
+
+## 비공개 (비밀번호 잠금)
+
+Pages 배포본은 `DASHBOARD_PASSWORD` Secret으로 AES-256-GCM 암호화된 `data.enc`만 올라갑니다. 페이지를 열면 비밀번호를 묻고, 기기마다 한 번만 입력합니다(🔒 잠그기 버튼으로 잊게 할 수 있음).
+비밀번호 변경: `gh secret set DASHBOARD_PASSWORD` 후 Actions 수동 실행. 로컬(127.0.0.1)은 평문 `data.json`이라 비밀번호가 없습니다.

@@ -245,6 +245,11 @@ details summary { cursor: pointer; font-weight: 600; }
 .gloss b { color: var(--text); }
 .gloss p { margin: 0 0 6px; color: var(--text-2); }
 
+.lock { max-width: 380px; margin: 80px auto; text-align: center; }
+.lock .icon { font-size: 44px; }
+.lock input { width: 100%; font: inherit; font-size: 17px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--text); margin: 14px 0 10px; text-align: center; }
+.lock .btn { width: 100%; padding: 11px; font-size: 15px; background: var(--accent); color: #fff; border-color: var(--accent); }
+.lock .err { color: var(--crit); font-size: 13px; min-height: 18px; margin-top: 8px; }
 .disclaimer { margin-top: 30px; font-size: 12px; color: var(--text-3); border-top: 1px solid var(--line); padding-top: 12px; }
 .loading { padding: 60px; text-align: center; color: var(--text-3); }
 .tooltip { position: fixed; pointer-events: none; background: var(--text); color: var(--bg); font-size: 12px; padding: 4px 8px; border-radius: 6px; z-index: 60; display: none; white-space: nowrap; }

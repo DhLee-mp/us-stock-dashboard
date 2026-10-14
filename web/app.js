@@ -404,6 +404,7 @@ document.addEventListener("input", e => {
   if (e.target.id === "sectorF") { sectorF = e.target.value; renderPart("all", renderTable(DATA.stocks)); }
 });
 $("#helpBtn").addEventListener("click", openHelp);
+$("#lockBtn").addEventListener("click", () => { try { localStorage.removeItem("dashpw"); } catch (_) {} location.reload(); });
 $("#themeBtn").addEventListener("click", () => {
   const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   const next = cur === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = next;
@@ -462,11 +463,44 @@ async function pollLive() {
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && DATA) pollLive(); });
 
-fetch("data.json?" + Date.now()).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+/* ---------- 암호화 데이터 (GitHub Pages 배포본) ---------- */
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function decryptData(enc, password) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({name: "PBKDF2", salt: b64(enc.salt), iterations: enc.iter, hash: "SHA-256"}, base, {name: "AES-GCM", length: 256}, false, ["decrypt"]);
+  const pt = await crypto.subtle.decrypt({name: "AES-GCM", iv: b64(enc.iv)}, key, b64(enc.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+function askPassword(enc) {
+  return new Promise(resolve => {
+    $("#app").innerHTML = `<div class="lock card"><div class="icon">🔒</div><b>비밀번호를 입력하세요</b><div class="tiny">이 대시보드는 개인용으로 잠겨 있습니다</div>
+      <input id="pw" type="password" autocomplete="current-password" placeholder="비밀번호"><button class="btn" id="pwBtn">열기</button><div class="err" id="pwErr"></div></div>`;
+    const input = $("#pw"); input.focus();
+    const go = async () => {
+      $("#pwErr").textContent = ""; $("#pwBtn").textContent = "확인 중…";
+      try { const d = await decryptData(enc, input.value); try { localStorage.setItem("dashpw", input.value); } catch (_) {} resolve(d); }
+      catch (_) { $("#pwErr").textContent = "비밀번호가 틀렸습니다"; $("#pwBtn").textContent = "열기"; input.select(); }
+    };
+    $("#pwBtn").addEventListener("click", go); input.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  });
+}
+async function loadData() {
+  const r = await fetch("data.json?" + Date.now());
+  if (r.ok) return r.json();
+  const e = await fetch("data.enc?" + Date.now());
+  if (!e.ok) throw new Error(r.status);
+  const enc = await e.json();
+  STATIC = true;
+  let saved = null; try { saved = localStorage.getItem("dashpw"); } catch (_) {}
+  if (saved) { try { return await decryptData(enc, saved); } catch (_) { try { localStorage.removeItem("dashpw"); } catch (_) {} } }
+  return askPassword(enc);
+}
+loadData().then(d => {
   DATA = d; d.stocks.forEach(s => bySym[s.symbol] = s); (d.etfs || []).forEach(e => byEtf[e.symbol] = e);
   $("#gen").textContent = "분석 " + d.generated_at.replace("T", " ") + ` · 전체 ${d.universe_size.toLocaleString()}종목 중 ${d.analyzed}개`;
   $("#sources").textContent = d.sources.join(", ");
   renderAll();
-  pollLive();
+  if (STATIC) $("#liveBadge").textContent = "자동 갱신본 (매일 07:00 KST) · 장중 실시간 시세는 맥에서 열 때만"; else pollLive();
+  $("#lockBtn").style.display = STATIC ? "" : "none";
 }).catch(err => { $("#app").innerHTML = `<div class="loading">데이터를 불러오지 못했습니다 (${esc(err.message)}).<br>터미널에서 <code>python run.py</code> 를 실행하면 수집·갱신 후 자동으로 열립니다.</div>`; });
 })();

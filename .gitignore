@@ -1,7 +1,7 @@
 .venv/
 data/
 web/data.json
-web/static.json
+web/data.enc
 logs/
 build/icon.iconset/
 build/icon_1024.png

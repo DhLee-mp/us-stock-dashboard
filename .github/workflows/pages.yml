@@ -30,6 +30,9 @@ jobs:
         run: python run.py --build --top 200 --workers 5
       - name: 정적 모드 표시용 메타 파일
         run: echo '{"static":true}' > web/static.json
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true   # Pages가 꺼져 있으면 자동으로 켠다
       - uses: actions/upload-pages-artifact@v3
         with:
           path: web

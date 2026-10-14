@@ -23,7 +23,8 @@ BROWSER_UA = (
     "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 )
 # SEC는 연락처가 포함된 User-Agent를 요구한다 (sec.gov/os/webmaster-faq#developers).
-SEC_UA = "us-stock-dashboard/1.0 (contact: myldh33@gmail.com)"
+# 환경변수 SEC_CONTACT 에 이메일을 넣는다 (GitHub Actions에서는 Secret으로 주입).
+SEC_UA = f"us-stock-dashboard/1.0 (contact: {os.environ.get('SEC_CONTACT', 'anonymous@example.com')})"
 
 _lock = threading.Lock()
 _last_call: dict[str, float] = {}

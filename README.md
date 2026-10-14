@@ -79,3 +79,7 @@ Safari를 쓰는 경우: 대시보드를 연 상태에서 **파일 → Dock에 �
 
 서버는 `--host 0.0.0.0`으로 실행되며(launchd 기본), 같은 Wi-Fi에서 `http://<맥이름>.local:8765/` 로 접속합니다. 맥 이름은 `scutil --get LocalHostName`. `.local`이 안 되면 `ipconfig getifaddr en0`의 IP를 씁니다.
 iPhone Safari에서 공유 → **홈 화면에 추가**를 누르면 앱 아이콘으로 설치됩니다. macOS 방화벽이 켜져 있으면 처음 한 번 Python의 수신 연결을 허용해야 합니다.
+
+## GitHub Pages 자동 배포
+
+`.github/workflows/pages.yml`이 매일 07:00 KST에 데이터를 수집해 Pages로 배포합니다. SEC 접속용 연락처는 저장소 Secret `SEC_CONTACT`에 넣습니다 (로컬은 환경변수).

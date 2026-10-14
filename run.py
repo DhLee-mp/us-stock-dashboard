@@ -49,6 +49,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             from src import live
             return self._json({"market": live.market_status()})
         if path.startswith("/data.json"):
+            if not os.path.exists(os.path.join(WEB, "data.json")):
+                return self.send_error(404)
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Cache-Control", "no-store")
